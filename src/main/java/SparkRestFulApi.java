@@ -1,13 +1,6 @@
+import clases.*;
 import com.google.gson.Gson;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Collection;
 
 import static spark.Spark.*;
@@ -20,45 +13,45 @@ public class SparkRestFulApi {
 
         port(9000);
 
-        //GET que recibe token, username y devuelve Sites
+        //GET que devuelve Items cargados
+
         get("/items", (req, res) -> {
             res.type("application/json");
             Collection<Item> items = service.getItems();
             return new Gson().toJson(new StandardResponse(StatusResponse.OK, new Gson().toJsonTree(items)));
         });
 
-        //GET que recibe username y devuelve Sites
+        //GET que devuelve items por usuario
 
-        get("/items/:username",(req, res) -> {
+        get("/items/:id",(req, res) -> {
             res.type("application/json");
-            Collection<Item> items = service.getItemsByUser(req.params(":username"));
+            Collection<Item> items = service.getItemsByUser(req.params(":id"));
             return new Gson().toJson(new StandardResponse(StatusResponse.OK, new Gson().toJsonTree(items)));
         });
 
-        //POST de un Item
+        //POST para AGREGAR un Item
 
         post("/items/", (req, res) -> {
             res.type("application/json");
             Item item = new Gson().fromJson(req.body(), Item.class);
-            int id = service.addItem(item);
+            String id = service.addItem(item.getId(), item);
             return new Gson().toJson(new StandardResponse(StatusResponse.OK, new Gson().toJsonTree(item)));
         });
 
 
-        //post
+        //post que devuelve Token
 
         post("/token", (req,res)->{
             res.type("application/json");
-            Token tokenObt = new Gson().fromJson(Conexion.post("http://localhost:8084/token",
+            Respuesta respuesta = new Gson().fromJson(Conexion.post("http://localhost:8084/token",
                                                 req.headers("username"),
                                                 req.headers("password")),
-                                                Token.class);
+                                                Respuesta.class);
 
-            Token token =null;
-            token.setToken(tokenObt.getToken());
-            System.out.println(token);
-            //return new Gson().toJson(new StandarResponse(StatusResponse.SUCCESS, new Gson().fromJson(br.readLine(),Token.class)));
-            return new Gson().toJson(new StandardResponse(StatusResponse.OK, new Gson().toJsonTree(token.getToken())));
+            System.out.println(respuesta.getData().getToken());
+
+            return new Gson().toJsonTree(new StandardResponse(StatusResponse.OK, new Gson().toJsonTree(respuesta.getData())));
+
         });
 
 
@@ -66,18 +59,20 @@ public class SparkRestFulApi {
 
         get("/sites" ,(req, res) -> {
             res.type("application/json");
-            //System.out.println("paso");
-            Site[] sites= new Gson().fromJson(Conexion.get("http://localhost:8084/sites"), Site[].class);
-            /*
-            BufferedReader b1= Conexion.get("https://localhost:8082");
-            Site[] sites= new Gson().fromJson(b1, Site[].class);
-            */
+            Site[] sites= new Gson().fromJson(Conexion.get("http://localhost:8084/sites",
+                    req.headers("username"), req.headers("token")), Site[].class);
             return new Gson().toJson(new StandardResponse(StatusResponse.OK, new Gson().toJsonTree(sites)));
         });
 
+        //GET CATEGORIES
 
-
-
+        get("/sites/:idSite/categories" , (req, res) -> {
+            res.type("application/json");
+            String id_site = req.params(":id_site");
+            Category[] categories= new Gson().fromJson(Conexion.get("http://localhost:8084/sites/"+id_site+"/categories",
+                    req.headers("token"), req.headers("username")), Category[].class);
+            return new Gson().toJson(new StandardResponse(StatusResponse.OK, new Gson().toJsonTree(categories)));
+        });
 
     }
 }

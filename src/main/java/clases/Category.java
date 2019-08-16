@@ -1,12 +1,14 @@
-public class Site {
+package clases;
+
+public class Category {
     private String id;
     private String name;
 
-    public Site(){
+    public Category(){
 
     }
 
-    public Site(String id, String name) {
+    public Category(String id, String name) {
         this.id = id;
         this.name = name;
     }

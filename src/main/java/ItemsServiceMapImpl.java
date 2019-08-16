@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+import clases.*;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,22 +24,20 @@ public class ItemsServiceMapImpl implements IItemService {
         Category cat2 = new Category("MLA1071","Animales y Mascotas");
 
 
-         Site[] sites = new Site[]{site, site1, site2};
+        Site[] sites = new Site[]{site, site1, site2};
+        Category[] categories = new Category[]{cat,cat1,cat2};
 
-         Item i1 = new Item( u1, site, cat, "comida");
-         Item i2 = new Item(u1, site, cat2, "computadora");
-         Item i3 = new Item(u2, site1, cat, "heladera");
-         Item i4 = new Item(u2, site1, cat1, "celular");
+        Item i1 = new Item("item1" , "comida", u1, site, cat);
+        Item i2 = new Item("item2", "computadora" , u1, site, cat2);
+        Item i3 = new Item("item3" , "heladera", u1, site1, cat);
+        Item i4 = new Item("item4", "celular", u2, site1, cat1);
 
-         itemsMap.put("heladera", i3);
-
-         Category[] categories = new Category[]{cat,cat1,cat2};
-         itemsMap.put("celular", i4);
-         itemsMap.put("comida", i1);
-         itemsMap.put("computadora", i2);
+         itemsMap.put("item1", i1);
+         itemsMap.put("idem2", i2);
+         itemsMap.put("idem3", i3);
+         itemsMap.put("idem4", i4);
 
     }
-
 
     public Collection<Item> getItems() {
         return itemsMap.values();
@@ -50,18 +49,22 @@ public class ItemsServiceMapImpl implements IItemService {
 
         items1.forEach(it -> {
             if (it.getUser().getUsername().equalsIgnoreCase(username)) {
-                itemfiltered.put(it.getName(), it);
+                itemfiltered.put(it.getId(), it);
             }
         });
-
         return itemfiltered.values();
 
     }
 
-    public int addItem(Item item) {
-        itemsMap.put(item.getName(), item);
-        return itemsMap.size();
+    public Item getItem (String id){
+        return this.itemsMap.get(id);
     }
+
+    public String addItem(String id, Item item) {
+        itemsMap.put(id, item);
+        return id;
+    }
+
 
 }
 

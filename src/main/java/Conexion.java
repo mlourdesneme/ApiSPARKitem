@@ -11,20 +11,24 @@ import java.util.Scanner;
 
 public class Conexion {
 
-    public static BufferedReader get(String url1) {
+    public static BufferedReader get(String url1 , String username, String token) {
 
         try {
             URL url = new URL(url1);
 
             try {
                 URLConnection urlConnection = url.openConnection() ;
+                urlConnection.setRequestProperty("username", username);
+                urlConnection.setRequestProperty("token", token);
+
                 urlConnection.setRequestProperty("Accept", "application/json");
-                urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0");
+                urlConnection.setRequestProperty("clases.User-Agent", "Mozilla/5.0");
                 if (urlConnection instanceof HttpURLConnection) {
 
                     HttpURLConnection connection = (HttpURLConnection) urlConnection;
                     BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     Gson gson = new Gson();
+
                     System.out.println("Pasoconexion");
                     return in;
 
