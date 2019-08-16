@@ -54,13 +54,15 @@ public class SparkRestFulApi {
 
         });
 
-
         //GET SITES
 
         get("/sites" ,(req, res) -> {
             res.type("application/json");
+            System.out.println("Pase por /sites");
             Site[] sites= new Gson().fromJson(Conexion.get("http://localhost:8084/sites",
                     req.headers("username"), req.headers("token")), Site[].class);
+            System.out.println(sites);
+            System.out.println("Pase por /sites");
             return new Gson().toJson(new StandardResponse(StatusResponse.OK, new Gson().toJsonTree(sites)));
         });
 
@@ -70,7 +72,7 @@ public class SparkRestFulApi {
             res.type("application/json");
             String id_site = req.params(":id_site");
             Category[] categories= new Gson().fromJson(Conexion.get("http://localhost:8084/sites/"+id_site+"/categories",
-                    req.headers("token"), req.headers("username")), Category[].class);
+                    req.headers("username"), req.headers("token")), Category[].class);
             return new Gson().toJson(new StandardResponse(StatusResponse.OK, new Gson().toJsonTree(categories)));
         });
 

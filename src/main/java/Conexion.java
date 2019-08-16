@@ -28,9 +28,10 @@ public class Conexion {
                     HttpURLConnection connection = (HttpURLConnection) urlConnection;
                     BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     Gson gson = new Gson();
-
                     System.out.println("Pasoconexion");
-                    return in;
+                    System.out.println(in);
+                    return  (new BufferedReader(new InputStreamReader(connection.getInputStream())));
+
 
                 } else {
                     System.out.println("URL invalida");
